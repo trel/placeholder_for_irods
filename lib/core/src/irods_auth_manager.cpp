@@ -6,7 +6,7 @@ namespace irods {
 // globally available auth manager
     auth_manager auth_mgr;
 
-    auth_manager::auth_manager( void ) {
+    auth_manager::auth_manager( ) {
         // TODO - stub
     }
 
@@ -45,7 +45,7 @@ namespace irods {
 
         // =-=-=-=-=-=-=-
         // call generic plugin loader
-        auth* ath = 0;
+        auth* ath = nullptr;
         error ret = load_plugin< auth >(
                         ath,
                         _plugin_name,

@@ -2,6 +2,8 @@
  */
 
 #include <fcntl.h>
+
+#include <utility>
 #include "sharedmemory.hpp"
 #include "rodsConnect.h"
 #include "irods_server_properties.hpp"
@@ -16,11 +18,11 @@ unsigned char *prepareServerSharedMemory( const std::string& _key ) {
     irods::error ret = getSharedMemoryName( _key, shared_memory_name );
     if ( !ret.ok() ) {
         rodsLog( LOG_ERROR, "prepareServerSharedMemory: failed to get shared memory name" );
-        return NULL;
+        return nullptr;
     }
 
     try {
-        bi::shared_memory_object* tmp_s = new bi::shared_memory_object(
+        auto  tmp_s = new bi::shared_memory_object(
                                             bi::open_or_create,
                                             shared_memory_name.c_str(),
                                             bi::read_write,
@@ -32,7 +34,7 @@ unsigned char *prepareServerSharedMemory( const std::string& _key ) {
             tmp_s->truncate( SHMMAX );
         }
         
-        bi::mapped_region* tmp_m = new bi::mapped_region( *tmp_s, bi::read_write );
+        auto  tmp_m = new bi::mapped_region( *tmp_s, bi::read_write );
         unsigned char *shmBuf = ( unsigned char * ) tmp_m->get_address();
 
         std::memset( shmBuf, 0, tmp_m->get_size() );
@@ -45,7 +47,7 @@ unsigned char *prepareServerSharedMemory( const std::string& _key ) {
     }
     catch ( const bi::interprocess_exception &e ) {
         rodsLog( LOG_ERROR, "prepareServerSharedMemory: failed to prepare shared memory. Exception caught [%s]", e.what() );
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -74,23 +76,23 @@ unsigned char *prepareNonServerSharedMemory( const std::string& _key ) {
     irods::error ret = getSharedMemoryName( _key, shared_memory_name );
     if ( !ret.ok() ) {
         rodsLog( LOG_ERROR, "prepareNonServerSharedMemory: failed to get shared memory name [%s]", shared_memory_name.c_str() );
-        return NULL;
+        return nullptr;
     }
 
     try {
-        bi::shared_memory_object* tmp_s = new bi::shared_memory_object(
+        auto  tmp_s = new bi::shared_memory_object(
                                                   bi::open_only,
                                                   shared_memory_name.c_str(),
                                                   bi::read_only );
         shm_obj[_key] = std::unique_ptr<bi::shared_memory_object>(tmp_s);
-        bi::mapped_region* tmp_m = new bi::mapped_region( *tmp_s, bi::read_only );
+        auto  tmp_m = new bi::mapped_region( *tmp_s, bi::read_only );
         unsigned char *buf = ( unsigned char * ) tmp_m->get_address();
         mapped[_key] = std::unique_ptr<bi::mapped_region>(tmp_m);
         return buf;
     }
     catch ( const bi::interprocess_exception &e ) {
         rodsLog( LOG_ERROR, "prepareNonServerSharedMemory: failed to get shared memory object [%s]. Exception caught [%s]", shared_memory_name.c_str(), e.what() );
-        return NULL;
+        return nullptr;
     }
 }
 

@@ -46,7 +46,7 @@ namespace irods {
             // NOTE :: called internally for static plugins
             //         with no type checking
             ms_table_entry(
-                const std::string&, // ms name
+                std::string , // ms name
                 unsigned int,                // num ms args
                 boost::any );       // function pointer
 
@@ -60,7 +60,7 @@ namespace irods {
 
             // =-=-=-=-=-=-=-
             // Destructor
-            virtual ~ms_table_entry();
+            ~ms_table_entry() override;
 
             /// =-=-=-=-=-=-=-
             /// @brief adaptor from old microservice sig to new plugin sign

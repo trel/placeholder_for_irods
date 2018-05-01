@@ -42,8 +42,7 @@ namespace irods {
 
             // =-=-=-=-=-=-=-
             /// @brief Destructor
-            virtual ~resource() {
-            }
+            ~resource() override = default;
 
             // =-=-=-=-=-=-=-
             /// @brief copy ctor

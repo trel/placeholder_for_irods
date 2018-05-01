@@ -22,9 +22,7 @@ namespace irods {
 
 // =-=-=-=-=-=-=-
 // public - Destructor
-    network_manager::~network_manager( ) {
-
-    } // dtor
+    network_manager::~network_manager( ) = default; // dtor
 
 // =-=-=-=-=-=-=-
 // public - retrieve a network plugin given its key
@@ -59,7 +57,7 @@ namespace irods {
         const std::string& _context ) {
         // =-=-=-=-=-=-=-
         // call generic plugin loader
-        network* net = 0;
+        network* net = nullptr;
         error ret = load_plugin< network >(
                         net,
                         _plugin_name,

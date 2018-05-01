@@ -560,7 +560,7 @@ irods::error unix_file_create(
                 irods::log( PASS( ret ) );
             }
             else {
-                irods::kvp_map_t::iterator itr = kvp.begin();
+                auto itr = kvp.begin();
                 for ( ; itr != kvp.end(); ++ itr ) {
                     rodsLog(
                         LOG_DEBUG,
@@ -666,7 +666,7 @@ irods::error unix_file_open(
                 irods::log( PASS( ret ) );
             }
             else {
-                irods::kvp_map_t::iterator itr = kvp.begin();
+                auto itr = kvp.begin();
                 for ( ; itr != kvp.end(); ++ itr ) {
                     rodsLog(
                         LOG_DEBUG,
@@ -1048,7 +1048,7 @@ irods::error unix_file_opendir(
 
     // =-=-=-=-=-=-=-
     // trap error case with bad fd
-    if ( NULL == dir_ptr ) {
+    if ( nullptr == dir_ptr ) {
         int status = UNIX_FILE_CREATE_ERR - errsav;
         std::stringstream msg;
         msg << "Open error for \"";
@@ -1127,7 +1127,7 @@ irods::error unix_file_readdir(
 
         // =-=-=-=-=-=-=-
         // handle error cases
-        if ( ( result = ASSERT_ERROR( tmp_dirent != NULL, -1, "End of directory list reached." ) ).ok() ) {
+        if ( ( result = ASSERT_ERROR( tmp_dirent != nullptr, -1, "End of directory list reached." ) ).ok() ) {
 
             // =-=-=-=-=-=-=-
             // alloc dirent as necessary
@@ -1410,7 +1410,7 @@ irods::error unix_resolve_hierarchy_open(
                 // set up variables for iteration
                 irods::error final_ret = SUCCESS();
                 std::vector< irods::physical_object > objs = _file_obj->replicas();
-                std::vector< irods::physical_object >::iterator itr = objs.begin();
+                auto itr = objs.begin();
 
                 // =-=-=-=-=-=-=-
                 // check to see if the replica is in this resource, if one is requested
@@ -1512,7 +1512,7 @@ irods::error unix_file_resolve_hierarchy(
 
     // =-=-=-=-=-=-=-
     // check incoming parameters
-    if ( NULL == _opr || NULL == _curr_host || NULL == _out_parser || NULL == _out_vote ) {
+    if ( nullptr == _opr || nullptr == _curr_host || nullptr == _out_parser || nullptr == _out_vote ) {
         return ERROR( SYS_INVALID_INPUT_PARAM, "Invalid input parameter." );
     }
 
@@ -1586,17 +1586,14 @@ class unixfilesystem_resource : public irods::resource {
         //     and will not be called.
         class maintenance_operation {
             public:
-                maintenance_operation( const std::string& _n ) : name_( _n ) {
+                maintenance_operation( std::string  _n ) : name_(std::move( _n )) {
                 }
 
                 maintenance_operation( const maintenance_operation& _rhs ) {
                     name_ = _rhs.name_;
                 }
 
-                maintenance_operation& operator=( const maintenance_operation& _rhs ) {
-                    name_ = _rhs.name_;
-                    return *this;
-                }
+                maintenance_operation& operator=( const maintenance_operation& _rhs ) = default;
 
                 irods::error operator()( rcComm_t* ) {
                     rodsLog( LOG_NOTICE, "unixfilesystem_resource::post_disconnect_maintenance_operation - [%s]",
@@ -1627,7 +1624,7 @@ class unixfilesystem_resource : public irods::resource {
 
                 // =-=-=-=-=-=-=-
                 // copy the properties from the context to the prop map
-                irods::kvp_map_t::iterator itr = kvp.begin();
+                auto itr = kvp.begin();
                 for( ; itr != kvp.end(); ++itr ) {
                     properties_.set< std::string >(
                         itr->first,
@@ -1636,7 +1633,7 @@ class unixfilesystem_resource : public irods::resource {
 
         } // ctor
 
-        irods::error need_post_disconnect_maintenance_operation( bool& _b ) {
+        irods::error need_post_disconnect_maintenance_operation( bool& _b ) override {
             _b = false;
             return SUCCESS();
         }
@@ -1644,7 +1641,7 @@ class unixfilesystem_resource : public irods::resource {
         // =-=-=-=-=-=-=-
         // 3b. pass along a functor for maintenance work after
         //     the client disconnects, uncomment the first two lines for effect.
-        irods::error post_disconnect_maintenance_operation( irods::pdmo_type& ) {
+        irods::error post_disconnect_maintenance_operation( irods::pdmo_type& ) override {
             irods::error result = SUCCESS();
             return ERROR( -1, "nop" );
         }
@@ -1662,7 +1659,7 @@ irods::resource* plugin_factory( const std::string& _inst_name, const std::strin
 
     // =-=-=-=-=-=-=-
     // 4a. create unixfilesystem_resource
-    unixfilesystem_resource* resc = new unixfilesystem_resource( _inst_name, _context );
+    auto  resc = new unixfilesystem_resource( _inst_name, _context );
 
     // =-=-=-=-=-=-=-
     // 4b. map function names to operations.  this map will be used to load

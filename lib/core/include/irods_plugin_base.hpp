@@ -44,10 +44,10 @@ namespace irods {
     class plugin_base {
         public:
             plugin_base(
-                    const std::string& _n,
-                    const std::string& _c ) :
-                context_( _c ),
-                instance_name_( _n ),
+                    std::string  _n,
+                    std::string  _c ) :
+                context_(std::move( _c )),
+                instance_name_(std::move( _n )),
                 interface_version_( PLUGIN_INTERFACE_VERSION ),
                 operations_( ),
                 start_operation_( default_plugin_start_operation ),
@@ -76,8 +76,7 @@ namespace irods {
 
             } // operator=
 
-            virtual ~plugin_base( ) {
-            } // dtor
+            virtual ~plugin_base( ) = default; // dtor
 
 
             /// @brief interface to create and register a PDMO
@@ -95,8 +94,8 @@ namespace irods {
             /// =-=-=-=-=-=-=-
             /// @brief list all of the operations in the plugin
             error enumerate_operations( std::vector< std::string >& _ops ) {
-                for ( size_t i = 0; i < ops_for_delay_load_.size(); ++i ) {
-                    _ops.push_back( ops_for_delay_load_[ i ].first );
+                for (auto & i : ops_for_delay_load_) {
+                    _ops.push_back( i.first );
                 }
 
                 return SUCCESS();

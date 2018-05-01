@@ -7,22 +7,18 @@ namespace irods {
 
 // =-=-=-=-=-=-=-
 // public - ctor
-    generic_database_object::generic_database_object(const std::string &_type) : type_(_type) {
+    generic_database_object::generic_database_object(std::string _type) : type_(std::move(_type)) {
 
     } // ctor
 
 // =-=-=-=-=-=-=-
 // public - cctor
     generic_database_object::generic_database_object(
-        const generic_database_object& _rhs ) :
-        database_object( _rhs ), type_(_rhs.type_) {
-
-    } // cctor
+        const generic_database_object& _rhs ) = default; // cctor
 
 // =-=-=-=-=-=-=-
 // public - dtor
-    generic_database_object::~generic_database_object() {
-    } // dtor
+    generic_database_object::~generic_database_object() = default; // dtor
 
 // =-=-=-=-=-=-=-
 // public - assignment operator

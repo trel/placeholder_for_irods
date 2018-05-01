@@ -276,7 +276,7 @@ irods::error mock_archive_file_stat(
     _statbuf->st_nlink = 1;
     _statbuf->st_uid   = getuid();
     _statbuf->st_gid   = getgid();
-    _statbuf->st_atime = _statbuf->st_mtime = _statbuf->st_ctime = time( 0 );
+    _statbuf->st_atime = _statbuf->st_mtime = _statbuf->st_ctime = time( nullptr );
     _statbuf->st_size  = UNKNOWN_FILE_SZ;
     return SUCCESS();
 
@@ -615,7 +615,7 @@ irods::error mock_archive_redirect_open(
                 // set up variables for iteration
                 bool          found     = false;
                 std::vector< irods::physical_object > objs = _file_obj->replicas();
-                std::vector< irods::physical_object >::iterator itr = objs.begin();
+                auto itr = objs.begin();
 
                 // =-=-=-=-=-=-=-
                 // check to see if the replica is in this resource, if one is requested
@@ -676,7 +676,7 @@ irods::error mock_archive_file_resolve_hierarchy(
         return PASSMSG( "Invalid plugin context.", ret );
     }
 
-    if ( NULL == _opr || NULL == _curr_host || NULL == _out_parser || NULL == _out_vote ) {
+    if ( nullptr == _opr || nullptr == _curr_host || nullptr == _out_parser || nullptr == _out_vote ) {
         return ERROR( SYS_INVALID_INPUT_PARAM, "Invalid input parameters." );
     }
 
@@ -736,17 +736,14 @@ class mockarchive_resource : public irods::resource {
         //     and will not be called.
         class maintenance_operation {
             public:
-                maintenance_operation( const std::string& _n ) : name_( _n ) {
+                maintenance_operation( std::string  _n ) : name_(std::move( _n )) {
                 }
 
                 maintenance_operation( const maintenance_operation& _rhs ) {
                     name_ = _rhs.name_;
                 }
 
-                maintenance_operation& operator=( const maintenance_operation& _rhs ) {
-                    name_ = _rhs.name_;
-                    return *this;
-                }
+                maintenance_operation& operator=( const maintenance_operation& _rhs ) = default;
 
                 irods::error operator()( rcComm_t* ) {
                     rodsLog( LOG_NOTICE, "mockarchive_resource::post_disconnect_maintenance_operation - [%s]",
@@ -766,7 +763,7 @@ class mockarchive_resource : public irods::resource {
         } // ctor
 
 
-        irods::error need_post_disconnect_maintenance_operation( bool& _b ) {
+        irods::error need_post_disconnect_maintenance_operation( bool& _b ) override {
             _b = false;
             return SUCCESS();
         }
@@ -775,7 +772,7 @@ class mockarchive_resource : public irods::resource {
         // =-=-=-=-=-=-=-
         // 3b. pass along a functor for maintenance work after
         //     the client disconnects, uncomment the first two lines for effect.
-        irods::error post_disconnect_maintenance_operation( irods::pdmo_type& ) {
+        irods::error post_disconnect_maintenance_operation( irods::pdmo_type& ) override {
             return ERROR( -1, "nop" );
         }
 
@@ -793,7 +790,7 @@ irods::resource* plugin_factory( const std::string& _inst_name, const std::strin
 
     // =-=-=-=-=-=-=-
     // 4a. create mockarchive_resource
-    mockarchive_resource* resc = new mockarchive_resource( _inst_name, _context );
+    auto  resc = new mockarchive_resource( _inst_name, _context );
 
     // =-=-=-=-=-=-=-
     // 4b. map function names to operations.  this map will be used to load

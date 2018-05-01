@@ -23,9 +23,7 @@ namespace irods {
 
 // =-=-=-=-=-=-=-
 // public - Destructor
-    database_manager::~database_manager( ) {
-
-    } // dtor
+    database_manager::~database_manager( ) = default; // dtor
 
 // =-=-=-=-=-=-=-
 // public - retrieve a database plugin given its key
@@ -61,7 +59,7 @@ namespace irods {
 
         // =-=-=-=-=-=-=-
         // call generic plugin loader
-        database* db = 0;
+        database* db = nullptr;
         error ret = load_plugin< database >(
                         db,
                         _plugin_name,

@@ -7,10 +7,10 @@ extern int ProcessType;
 namespace irods {
 
     generic_auth_object::generic_auth_object(
-        const std::string& _type,
+        std::string  _type,
         rError_t* _r_error ) :
         auth_object( _r_error ),
-        type_( _type ),
+        type_(std::move( _type )),
         sock_( 0 ) {
 
     } // constructor
@@ -21,9 +21,7 @@ namespace irods {
 
     } // constructor
 
-    generic_auth_object::~generic_auth_object() {
-
-    } // destructor
+    generic_auth_object::~generic_auth_object() = default; // destructor
 
 
     error generic_auth_object::resolve(

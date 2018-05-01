@@ -29,14 +29,11 @@ namespace irods {
 
             // =-=-=-=-=-=-=-
             // public - dtor
-            virtual ~network( ) {
-            } // dtor
+            ~network( ) override = default; // dtor
 
             // =-=-=-=-=-=-=-
             // public - cctor
-            network(const network& _rhs) :
-                plugin_base( _rhs ) {
-                } // cctor
+            network(const network& _rhs) = default; // cctor
 
             // =-=-=-=-=-=-=-
             // public - assignment

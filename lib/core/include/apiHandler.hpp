@@ -64,7 +64,7 @@ namespace irods {
     class api_call_adaptor {
         std::function<int(rsComm_t*, types_t...)> fcn_;
     public:
-        api_call_adaptor( std::function<int(rsComm_t*, types_t...)> _fcn ): fcn_(_fcn) {
+        api_call_adaptor( std::function<int(rsComm_t*, types_t...)> _fcn ): fcn_(std::move(_fcn)) {
         }
 
         irods::error operator()( irods::plugin_context&, rsComm_t* _comm, types_t... _t ) {
@@ -260,7 +260,7 @@ namespace irods {
     class api_entry_table : public lookup_table< api_entry_ptr, size_t, boost::hash< size_t > > {
         public:
             api_entry_table( apidef_t[], size_t );
-            ~api_entry_table();
+            ~api_entry_table() override;
 
     }; // class api_entry_table
 

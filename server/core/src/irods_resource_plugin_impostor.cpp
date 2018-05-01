@@ -234,7 +234,7 @@ irods::error impostor_file_resolve_hierarchy_open(
                 // set up variables for iteration
                 irods::error final_ret = SUCCESS();
                 std::vector< irods::physical_object > objs = _file_obj->replicas();
-                std::vector< irods::physical_object >::iterator itr = objs.begin();
+                auto itr = objs.begin();
 
                 // =-=-=-=-=-=-=-
                 // check to see if the replica is in this resource, if one is requested
@@ -336,7 +336,7 @@ irods::error impostor_file_resolve_hierarchy(
 
     // =-=-=-=-=-=-=-
     // check incoming parameters
-    if( NULL == _opr || NULL == _curr_host || NULL == _out_parser || NULL == _out_vote ) {
+    if( nullptr == _opr || nullptr == _curr_host || nullptr == _out_parser || nullptr == _out_vote ) {
         return ERROR( SYS_INVALID_INPUT_PARAM, "Invalid input parameter." );
     }
 

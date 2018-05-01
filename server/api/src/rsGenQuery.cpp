@@ -25,10 +25,9 @@
 namespace {
     std::string
     get_column_name(int j) {
-        const int n = sizeof(columnNames)/sizeof(columnNames[0]);
-        for (int i=0; i<n; ++i) {
-            if (columnNames[i].columnId == j) {
-                return std::string(columnNames[i].columnName);
+        for (auto & columnName : columnNames) {
+            if (columnName.columnId == j) {
+                return std::string(columnName.columnName);
             }
         }
 
@@ -71,15 +70,15 @@ namespace {
             return ret;
         }
 
-        for (size_t i=0; i<sizeof(selectInpOptionsMap)/sizeof(selectInpOptionsMap[0]); ++i) {
-            if (columnOption == selectInpOptionsMap[i].key) {
-                ret = std::string(selectInpOptionsMap[i].token) + "(" + ret + ")";
+        for (auto & i : selectInpOptionsMap) {
+            if (columnOption == i.key) {
+                ret = std::string(i.token) + "(" + ret + ")";
                 return ret;
             }
         }
-        for (size_t i=0; i<sizeof(selectInpFunctionMap)/sizeof(selectInpFunctionMap[0]); ++i) {
-            if (columnOption == selectInpFunctionMap[i].key) {
-                ret = std::string(selectInpFunctionMap[i].token) + "(" + ret + ")";
+        for (auto & i : selectInpFunctionMap) {
+            if (columnOption == i.key) {
+                ret = std::string(i.token) + "(" + ret + ")";
                 return ret;
             }
         }
@@ -95,9 +94,9 @@ namespace {
     insert_genquery_inp_into_stream(const genQueryInp_t *genQueryInp, OutStream& f) {
         f << "maxRows: " << genQueryInp->maxRows << " continueInx: " << genQueryInp->continueInx << " rowOffset: " << genQueryInp->rowOffset << '\n';
         f << "options: " << genQueryInp->options;
-        for (size_t i=0; i<sizeof(queryWideOptionsMap)/sizeof(queryWideOptionsMap[0]); ++i) {
-            if (genQueryInp->options & queryWideOptionsMap[i].key) {
-                f << " " << queryWideOptionsMap[i].cpp_macro;
+        for (auto & i : queryWideOptionsMap) {
+            if (genQueryInp->options & i.key) {
+                f << " " << i.cpp_macro;
             }
         }
         f << '\n';
@@ -106,14 +105,14 @@ namespace {
         for (int i=0; i<genQueryInp->selectInp.len; ++i) {
             f << "    column: " << genQueryInp->selectInp.inx[i] << " " << get_column_name(genQueryInp->selectInp.inx[i]) << '\n';
             f << "    options: " << genQueryInp->selectInp.value[i];
-            for (size_t j=0; j<sizeof(selectInpOptionsMap)/sizeof(selectInpOptionsMap[0]); ++j) {
-                if (genQueryInp->selectInp.value[i] & selectInpOptionsMap[j].key) {
-                    f << " " << selectInpOptionsMap[j].cpp_macro;
+            for (auto & j : selectInpOptionsMap) {
+                if (genQueryInp->selectInp.value[i] & j.key) {
+                    f << " " << j.cpp_macro;
                 }
             }
-            for (size_t j=0; j<sizeof(selectInpFunctionMap)/sizeof(selectInpFunctionMap[0]); ++j) {
-                if ((genQueryInp->selectInp.value[i] & 0x7) == selectInpFunctionMap[j].key) {
-                    f << " " << selectInpFunctionMap[j].cpp_macro;
+            for (auto & j : selectInpFunctionMap) {
+                if ((genQueryInp->selectInp.value[i] & 0x7) == j.key) {
+                    f << " " << j.cpp_macro;
                 }
             }
             f << '\n';
@@ -170,22 +169,22 @@ genquery_inp_to_iquest_string(const genQueryInp_t *q) {
     return ss.str();
 }
 
-irods::GenQueryInpWrapper::GenQueryInpWrapper(void) {
+irods::GenQueryInpWrapper::GenQueryInpWrapper() {
     memset(&genquery_inp_, 0, sizeof(genquery_inp_));
 }
-irods::GenQueryInpWrapper::~GenQueryInpWrapper(void) {
+irods::GenQueryInpWrapper::~GenQueryInpWrapper() {
     clearGenQueryInp(&genquery_inp_);
 }
-genQueryInp_t& irods::GenQueryInpWrapper::get(void) {
+genQueryInp_t& irods::GenQueryInpWrapper::get() {
     return genquery_inp_;
 }
-irods::GenQueryOutPtrWrapper::GenQueryOutPtrWrapper(void) {
+irods::GenQueryOutPtrWrapper::GenQueryOutPtrWrapper() {
     genquery_out_ptr_ = nullptr;
 }
-irods::GenQueryOutPtrWrapper::~GenQueryOutPtrWrapper(void) {
+irods::GenQueryOutPtrWrapper::~GenQueryOutPtrWrapper() {
     freeGenQueryOut(&genquery_out_ptr_);
 }
-genQueryOut_t*& irods::GenQueryOutPtrWrapper::get(void) {
+genQueryOut_t*& irods::GenQueryOutPtrWrapper::get() {
     return genquery_out_ptr_;
 }
 
@@ -727,7 +726,7 @@ _rsGenQuery( rsComm_t *rsComm, genQueryInp_t *genQueryInp,
     }
 
     if ( PrePostProcForGenQueryFlag < 0 ) {
-        if ( getenv( "PREPOSTPROCFORGENQUERYFLAG" ) != NULL ) {
+        if ( getenv( "PREPOSTPROCFORGENQUERYFLAG" ) != nullptr ) {
             PrePostProcForGenQueryFlag = 1;
         }
         else {
@@ -759,7 +758,7 @@ _rsGenQuery( rsComm_t *rsComm, genQueryInp_t *genQueryInp,
         rei.uoic = &rsComm->clientUser;
         rei.uoip = &rsComm->proxyUser;
 
-        status = applyRule( "acAclPolicy", NULL, &rei, NO_SAVE_REI );
+        status = applyRule( "acAclPolicy", nullptr, &rei, NO_SAVE_REI );
         if ( status == 0 ) {
 
             ruleExecuted = 1; /* No need to retry next time since it

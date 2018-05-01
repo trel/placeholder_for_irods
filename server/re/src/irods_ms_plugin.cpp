@@ -28,34 +28,24 @@ namespace irods {
     } // ctor
 
     ms_table_entry::ms_table_entry(
-        const std::string& _name,
+        std::string  _name,
         unsigned int                _num_args,
         boost::any         _fcn_ptr ) :
         plugin_base(
             "msvc",
             "ctx" ),
-        operation_name_( _name ),
+        operation_name_(std::move( _name )),
         num_args_( _num_args ) {
         operations_[operation_name_] = _fcn_ptr;
     } // ctor
 
     ms_table_entry::ms_table_entry(
-        const ms_table_entry& _rhs ) :
-        plugin_base( _rhs ),
-        operation_name_( _rhs.operation_name_ ),
-        num_args_( _rhs.num_args_ ) {
-    } // cctor
+        const ms_table_entry& _rhs ) = default; // cctor
 
     ms_table_entry& ms_table_entry::operator=(
-        const ms_table_entry& _rhs ) {
-        plugin_base::operator=( _rhs );
-        num_args_       = _rhs.num_args_;
-        operation_name_ = _rhs.operation_name_;
-        return *this;
-    } // operator=
+        const ms_table_entry& _rhs ) = default; // operator=
 
-    ms_table_entry::~ms_table_entry() {
-    } // dtor
+    ms_table_entry::~ms_table_entry() = default; // dtor
 
     int ms_table_entry::call(
         ruleExecInfo_t*          _rei,
@@ -240,7 +230,7 @@ namespace irods {
 // given the name of a microservice, try to load the shared object
 // and then register that ms with the table
     error load_microservice_plugin( ms_table& _table, const std::string _ms ) {
-        ms_table_entry* entry = 0;
+        ms_table_entry* entry = nullptr;
         error load_err = load_plugin< ms_table_entry >(
                              entry,
                              _ms,

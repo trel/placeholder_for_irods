@@ -25,24 +25,24 @@ namespace irods {
             // Constructors
             data_object();
             data_object(
-                const std::string&,		// phy path
+                std::string ,		// phy path
                 rodsLong_t,             // resc id
                 int,                	// mode
                 int );					// flags
             data_object(
-                const std::string&,		// phy path
+                std::string ,		// phy path
                 rodsLong_t,             // resc id
                 int,                	// mode
                 int,					// flags
                 const keyValPair_t& );	// cond_input
             data_object(
-                const std::string&,		// phy path
-                const std::string&,		// resc hier
+                std::string ,		// phy path
+                std::string ,		// resc hier
                 int,                	// mode
                 int );					// flags
             data_object(
-                const std::string&,		// phy path
-                const std::string&,		// resc hier
+                std::string ,		// phy path
+                std::string ,		// resc hier
                 int,                	// mode
                 int,					// flags
                 const keyValPair_t& );	// cond_input
@@ -52,7 +52,7 @@ namespace irods {
 
             // =-=-=-=-=-=-=-
             // Destructor
-            virtual ~data_object();
+            ~data_object() override;
 
             // =-=-=-=-=-=-=-
             // Operators
@@ -60,13 +60,13 @@ namespace irods {
 
             // =-=-=-=-=-=-=-
             // plugin resolution operators
-            virtual error resolve(
+            error resolve(
                 const std::string&, // plugin interface name
-                plugin_ptr& ) = 0;  // resolved plugin instance
+                plugin_ptr& ) override = 0;  // resolved plugin instance
 
             // =-=-=-=-=-=-=-
             // accessor for rule engine variables
-            virtual error get_re_vars( rule_engine_vars_t& );
+            error get_re_vars( rule_engine_vars_t& ) override;
 
             // =-=-=-=-=-=-=-
             // Accessors

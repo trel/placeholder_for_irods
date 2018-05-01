@@ -22,11 +22,11 @@ namespace irods {
             plugin_context(
                 irods::plugin_property_map& _prop_map,
                 first_class_object_ptr      _fco,
-                const std::string&          _results )  :
+                std::string           _results )  :
                 comm_( nullptr ),
                 prop_map_( &_prop_map ),
-                fco_( _fco ),
-                results_( _results )  {
+                fco_(std::move( _fco )),
+                results_(std::move( _results ))  {
 
             } // ctor
 
@@ -36,11 +36,11 @@ namespace irods {
                 rsComm_t*                   _comm,
                 irods::plugin_property_map& _prop_map,
                 first_class_object_ptr      _fco,
-                const std::string&          _results )  :
+                std::string           _results )  :
                 comm_( _comm ),
                 prop_map_( &_prop_map ),
-                fco_( _fco ),
-                results_( _results )  {
+                fco_(std::move( _fco )),
+                results_(std::move( _results ))  {
 
             } // ctor
 
@@ -68,9 +68,7 @@ namespace irods {
 
             // =-=-=-=-=-=-=-
             // dtor
-            virtual ~plugin_context() {
-
-            } // dtor
+            virtual ~plugin_context() = default; // dtor
 
             // =-=-=-=-=-=-=-
             // test to determine if contents are valid
@@ -84,7 +82,7 @@ namespace irods {
             template < typename OBJ_TYPE >
             error valid() {
                 // trap case of incorrect type for first class object
-                return boost::dynamic_pointer_cast< OBJ_TYPE >( fco_.get() ) == NULL ?
+                return boost::dynamic_pointer_cast< OBJ_TYPE >( fco_.get() ) == nullptr ?
                        ERROR( INVALID_DYNAMIC_CAST, "invalid type for fco cast" ) :
                        valid();
 

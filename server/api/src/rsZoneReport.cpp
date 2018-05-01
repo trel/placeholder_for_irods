@@ -30,7 +30,7 @@ int rsZoneReport(
     int status = getAndConnRcatHost(
                      _comm,
                      MASTER_RCAT,
-                     ( const char* )NULL,
+                     ( const char* )nullptr,
                      &rods_host );
     if ( status < 0 ) {
         return status;
@@ -118,7 +118,7 @@ irods::error get_server_reports(
     }
 
     std::map< rodsServerHost_t*, int > svr_reported;
-    rodsServerHost_t* icat_host = 0;
+    rodsServerHost_t* icat_host = nullptr;
     char* zone_name = getLocalZoneName();
     int status = getRcatHost( MASTER_RCAT, zone_name, &icat_host );
     if ( status < 0 ) {
@@ -127,13 +127,11 @@ irods::error get_server_reports(
                    "getRcatHost failed" );
     }
 
-    for ( irods::resource_manager::iterator itr = resc_mgr.begin();
-            itr != resc_mgr.end();
-            ++itr ) {
+    for (auto & itr : resc_mgr) {
 
-        irods::resource_ptr resc = itr->second;
+        irods::resource_ptr resc = itr.second;
 
-        rodsServerHost_t* tmp_host = 0;
+        rodsServerHost_t* tmp_host = nullptr;
         irods::error ret = resc->get_property< rodsServerHost_t* >(
                                irods::RESOURCE_HOST,
                                tmp_host );
@@ -151,7 +149,7 @@ irods::error get_server_reports(
         }
 
         // skip previously reported servers
-        std::map< rodsServerHost_t*, int >::iterator svr_itr =
+        auto svr_itr =
             svr_reported.find( tmp_host );
         if ( svr_itr != svr_reported.end() ) {
             continue;
@@ -179,13 +177,13 @@ irods::error get_server_reports(
             continue;
         }
 
-        bytesBuf_t* bbuf = NULL;
+        bytesBuf_t* bbuf = nullptr;
         status = rcServerReport(
                      tmp_host->conn,
                      &bbuf );
         if ( status < 0 ) {
             freeBBuf( bbuf );
-            bbuf = NULL;
+            bbuf = nullptr;
             rodsLog(
                 LOG_ERROR,
                 "rcServerReport failed for [%s], status = %d",
@@ -278,7 +276,7 @@ int _rsZoneReport(
     rsComm_t*    _comm,
     bytesBuf_t** _bbuf ) {
 
-    bytesBuf_t* bbuf = 0;
+    bytesBuf_t* bbuf = nullptr;
     int status = rsServerReport(
                      _comm,
                      &bbuf );
@@ -302,7 +300,7 @@ int _rsZoneReport(
         return ACTION_FAILED_ERR;
     }
 
-    json_t* coord_resc = 0;
+    json_t* coord_resc = nullptr;
     irods::error ret = get_coordinating_resources( _comm, coord_resc );
     if ( !ret.ok() ) {
         rodsLog(
@@ -312,7 +310,7 @@ int _rsZoneReport(
         return ret.code();
     }
 
-    json_t* svr_arr = 0;
+    json_t* svr_arr = nullptr;
     ret = get_server_reports( _comm, svr_arr );
     if ( !ret.ok() ) {
         rodsLog(

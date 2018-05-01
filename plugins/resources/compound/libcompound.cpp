@@ -513,7 +513,7 @@ irods::error repl_object(
                         addKeyVal( &data_obj_inp.condInput, IN_PDMO_KW,            sub_hier.c_str() );
                         addKeyVal( &data_obj_inp.condInput, _stage_sync_kw,        "1" );
 
-                        transferStat_t* trans_stat = NULL;
+                        transferStat_t* trans_stat = nullptr;
                         int status = rsDataObjRepl( _ctx.comm(), &data_obj_inp, &trans_stat );
                         free( trans_stat );
                         clearKeyVal( &data_obj_inp.condInput );
@@ -1773,7 +1773,7 @@ class compound_resource : public irods::resource {
 
             // =-=-=-=-=-=-=-
             // copy the properties from the context to the prop map
-            irods::kvp_map_t::iterator itr = kvp.begin();
+            auto itr = kvp.begin();
             for( ; itr != kvp.end(); ++itr ) {
                 properties_.set< std::string >(
                     itr->first,
@@ -1787,14 +1787,14 @@ class compound_resource : public irods::resource {
 
         // =-=-=-=-=-=-
         // override from plugin_base
-        irods::error need_post_disconnect_maintenance_operation( bool& _flg ) {
+        irods::error need_post_disconnect_maintenance_operation( bool& _flg ) override {
             _flg = false;
             return SUCCESS();
         }
 
         // =-=-=-=-=-=-
         // override from plugin_base
-        irods::error post_disconnect_maintenance_operation( irods::pdmo_type& ) {
+        irods::error post_disconnect_maintenance_operation( irods::pdmo_type& ) override {
             return ERROR( -1, "nop" );
         }
 
@@ -1812,7 +1812,7 @@ irods::resource* plugin_factory( const std::string& _inst_name,
                                  const std::string& _context ) {
     // =-=-=-=-=-=-=-
     // 4a. create compound_resource object
-    compound_resource* resc = new compound_resource( _inst_name, _context );
+    auto  resc = new compound_resource( _inst_name, _context );
 
     // =-=-=-=-=-=-=-
     // 4b. map function names to operations.  this map will be used to load

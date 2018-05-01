@@ -14,9 +14,7 @@ namespace irods {
 
     } // ctor
 
-    configuration_parser::~configuration_parser() {
-
-    } // dtor
+    configuration_parser::~configuration_parser() = default; // dtor
 
     configuration_parser::configuration_parser(
         const configuration_parser& _rhs ) {
@@ -100,8 +98,8 @@ namespace irods {
             } else {
                 const auto json_object_any = convert_json(json);
                 const auto& json_object = boost::any_cast<const std::unordered_map<std::string, boost::any>&>(json_object_any);
-                for ( auto it = json_object.cbegin(); it != json_object.cend(); ++it ) {
-                    root_[it->first] = it->second;
+                for (const auto & it : json_object) {
+                    root_[it.first] = it.second;
                 }
             }
         } catch ( const irods::exception& e ) {
@@ -139,7 +137,7 @@ namespace irods {
             {
                 std::vector<boost::any> vector;
                 size_t  idx = 0;
-                json_t* element = NULL;
+                json_t* element = nullptr;
                 json_array_foreach(_val, idx, element) {
                     try {
                         vector.push_back(convert_json(element));
@@ -153,8 +151,8 @@ namespace irods {
             case JSON_OBJECT:
             {
                 std::unordered_map<std::string, boost::any> map;
-                const char* key = NULL;
-                json_t*     subval = NULL;
+                const char* key = nullptr;
+                json_t*     subval = nullptr;
                 json_object_foreach( _val, key, subval ) {
                     try {
                         map.insert(std::pair<std::string, boost::any>(std::string(key), convert_json(subval)));

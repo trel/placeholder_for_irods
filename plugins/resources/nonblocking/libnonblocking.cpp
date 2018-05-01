@@ -527,7 +527,7 @@ irods::error non_blocking_file_read(
 
         while ( toRead > 0 ) {
 #ifndef _WIN32
-            status = select( fd + 1, &set, NULL, NULL, &tv );
+            status = select( fd + 1, &set, nullptr, nullptr, &tv );
             if ( status == 0 ) {
                 /* timedout */
                 if ( _len - toRead > 0 ) {
@@ -604,7 +604,7 @@ irods::error non_blocking_file_write(
         int nbytes   = 0;
         int toWrite  = 0;
         int status   = 0;
-        char* tmpPtr = 0;
+        char* tmpPtr = nullptr;
 
         struct timeval tv;
         bzero( &tv, sizeof( tv ) );
@@ -620,7 +620,7 @@ irods::error non_blocking_file_write(
 
         while ( toWrite > 0 ) {
 #ifndef _WIN32
-            status = select( fd + 1, NULL, &set, NULL, &tv );
+            status = select( fd + 1, nullptr, &set, nullptr, &tv );
             if ( status == 0 ) {
                 /* timedout */
                 return ERROR( UNIX_FILE_OPR_TIMEOUT_ERR - errno, "time out error" );;
@@ -898,7 +898,7 @@ irods::error non_blocking_file_opendir(
 
         // =-=-=-=-=-=-=-
         // return an error if necessary
-        if ( NULL != dir_ptr ) {
+        if ( nullptr != dir_ptr ) {
             // =-=-=-=-=-=-=-
             // cache dir_ptr in out variables
             fco->directory_pointer( dir_ptr );
@@ -976,7 +976,7 @@ irods::error non_blocking_file_readdir(
 
         // =-=-=-=-=-=-=-
         // handle error cases
-        if ( ( result = ASSERT_ERROR( tmp_dirent != NULL, -1, "End of directory list reached." ) ).ok() ) {
+        if ( ( result = ASSERT_ERROR( tmp_dirent != nullptr, -1, "End of directory list reached." ) ).ok() ) {
 
             // =-=-=-=-=-=-=-
             // alloc dirent as necessary
@@ -1329,7 +1329,7 @@ irods::error non_blocking_file_redirect_open(
                 // set up variables for iteration
                 irods::error final_ret = SUCCESS();
                 std::vector< irods::physical_object > objs = _file_obj->replicas();
-                std::vector< irods::physical_object >::iterator itr = objs.begin();
+                auto itr = objs.begin();
 
                 // =-=-=-=-=-=-=-
                 // check to see if the replica is in this resource, if one is requested
@@ -1418,7 +1418,7 @@ irods::error non_blocking_file_resolve_hierarchy(
 
     // =-=-=-=-=-=-=-
     // check incoming parameters
-    if ( NULL == _opr || NULL == _curr_host || NULL == _out_parser || NULL == _out_vote ) {
+    if ( nullptr == _opr || nullptr == _curr_host || nullptr == _out_parser || nullptr == _out_vote ) {
         return ERROR( SYS_INVALID_INPUT_PARAM, "Invalid input parameter." );
     }
 
@@ -1487,17 +1487,14 @@ class non_blocking_resource : public irods::resource {
         //     and will not be called.
         class maintenance_operation {
             public:
-                maintenance_operation( const std::string& _n ) : name_( _n ) {
+                maintenance_operation( std::string  _n ) : name_(std::move( _n )) {
                 }
 
                 maintenance_operation( const maintenance_operation& _rhs ) {
                     name_ = _rhs.name_;
                 }
 
-                maintenance_operation& operator=( const maintenance_operation& _rhs ) {
-                    name_ = _rhs.name_;
-                    return *this;
-                }
+                maintenance_operation& operator=( const maintenance_operation& _rhs ) = default;
 
                 irods::error operator()( rcComm_t* ) {
                     rodsLog( LOG_NOTICE, "non_blocking_resource::post_disconnect_maintenance_operation - [%s]",
@@ -1520,7 +1517,7 @@ class non_blocking_resource : public irods::resource {
         } // ctor
 
 
-        irods::error need_post_disconnect_maintenance_operation( bool& _b ) {
+        irods::error need_post_disconnect_maintenance_operation( bool& _b ) override {
             _b = false;
             return SUCCESS();
         }
@@ -1529,7 +1526,7 @@ class non_blocking_resource : public irods::resource {
         // =-=-=-=-=-=-=-
         // 3b. pass along a functor for maintenance work after
         //     the client disconnects, uncomment the first two lines for effect.
-        irods::error post_disconnect_maintenance_operation( irods::pdmo_type& ) {
+        irods::error post_disconnect_maintenance_operation( irods::pdmo_type& ) override {
             irods::error result = SUCCESS();
             return ERROR( -1, "nop" );
         }
@@ -1547,7 +1544,7 @@ irods::resource* plugin_factory( const std::string& _inst_name, const std::strin
 
     // =-=-=-=-=-=-=-
     // 4a. create non_blocking_resource
-    non_blocking_resource* resc = new non_blocking_resource( _inst_name, _context );
+    auto  resc = new non_blocking_resource( _inst_name, _context );
 
     // =-=-=-=-=-=-=-
     // 4b. map function names to operations.  this map will be used to load

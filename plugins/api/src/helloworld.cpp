@@ -135,12 +135,12 @@ extern "C" {
                                     int( rsComm_t*,helloInp_t*,helloOut_t**)>(
                                         rs_hello_world), // operation
 								"api_hello_world",    // operation name
-                                0,  // null clear fcn
+                                nullptr,  // null clear fcn
                                 (funcPtr)CALL_HELLOINP_HELLO_OUT
                               };
         // =-=-=-=-=-=-=-
         // create an api object
-        irods::api_entry* api = new irods::api_entry( def );
+        auto  api = new irods::api_entry( def );
 
 #ifdef RODS_SERVER
         irods::re_serialization::add_operation(

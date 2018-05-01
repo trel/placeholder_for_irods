@@ -10,7 +10,7 @@ namespace irods {
 
     static const std::string DELIM = ";";
 
-    hierarchy_parser::hierarchy_parser( void ) {
+    hierarchy_parser::hierarchy_parser( ) {
     }
 
     hierarchy_parser::hierarchy_parser(
@@ -44,7 +44,7 @@ namespace irods {
         _ret_string.clear();
         bool first = true;
         bool done = false;
-        for ( resc_list_t::const_iterator itr = resc_list_.begin();
+        for ( auto itr = resc_list_.begin();
                 !done && itr != resc_list_.end(); ++itr ) {
             if ( first ) {
                 first = false;
@@ -101,11 +101,11 @@ namespace irods {
         error result = SUCCESS();
         _ret_resc.clear();
         bool found = false;
-        for ( resc_list_t::const_iterator itr = resc_list_.begin();
+        for ( auto itr = resc_list_.begin();
                 !found && itr != resc_list_.end(); ++itr ) {
             if ( *itr == _current ) {
                 found = true;
-                resc_list_t::const_iterator next_itr = itr + 1;
+                auto next_itr = itr + 1;
                 if ( next_itr != resc_list_.end() ) {
                     _ret_resc = *next_itr;
                 }
@@ -132,28 +132,25 @@ namespace irods {
         return result;
     }
 
-    hierarchy_parser::const_iterator hierarchy_parser::begin( void ) const {
+    hierarchy_parser::const_iterator hierarchy_parser::begin( ) const {
         return resc_list_.begin();
     }
 
-    hierarchy_parser::const_iterator hierarchy_parser::end( void ) const {
+    hierarchy_parser::const_iterator hierarchy_parser::end( ) const {
         return resc_list_.end();
     }
 
     hierarchy_parser& hierarchy_parser::operator=(
-        const hierarchy_parser& rhs ) {
-        resc_list_ = rhs.resc_list_;
-        return *this;
-    }
+        const hierarchy_parser& rhs ) = default;
 
-    const std::string& hierarchy_parser::delimiter( void ) {
+    const std::string& hierarchy_parser::delimiter( ) {
         return DELIM;
     }
 
     bool hierarchy_parser::resc_in_hier(
         const std::string& _resc ) const {
         bool result = false;
-        for ( resc_list_t::const_iterator itr = resc_list_.begin(); !result && itr != resc_list_.end(); ++itr ) {
+        for ( auto itr = resc_list_.begin(); !result && itr != resc_list_.end(); ++itr ) {
             if ( *itr == _resc ) {
                 result = true;
             }

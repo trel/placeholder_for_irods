@@ -36,7 +36,7 @@ rsGeneralAdmin( rsComm_t *rsComm, generalAdminInp_t *generalAdminInp ) {
 
     rodsLog( LOG_DEBUG, "generalAdmin" );
 
-    status = getAndConnRcatHost( rsComm, MASTER_RCAT, ( const char* )NULL, &rodsServerHost );
+    status = getAndConnRcatHost( rsComm, MASTER_RCAT, ( const char* )nullptr, &rodsServerHost );
     if ( status < 0 ) {
         return status;
     }
@@ -305,7 +305,7 @@ _listRescTypes( rsComm_t* _rsComm ) {
     ret = name_gen.list_plugins( plugin_home, plugin_list );
     if ( ret.ok() ) {
         std::stringstream msg;
-        for ( irods::plugin_name_generator::plugin_list_t::iterator it = plugin_list.begin();
+        for ( auto it = plugin_list.begin();
                 result == 0 && it != plugin_list.end(); ++it ) {
             msg << *it << std::endl;
         }
@@ -335,7 +335,7 @@ _rsGeneralAdmin( rsComm_t *rsComm, generalAdminInp_t *generalAdminInp ) {
 
     memset( ( char* )&rei2, 0, sizeof( ruleExecInfo_t ) );
     rei2.rsComm = rsComm;
-    if ( rsComm != NULL ) {
+    if ( rsComm != nullptr ) {
         rei2.uoic = &rsComm->clientUser;
         rei2.uoip = &rsComm->proxyUser;
     }
@@ -359,7 +359,7 @@ _rsGeneralAdmin( rsComm_t *rsComm, generalAdminInp_t *generalAdminInp ) {
             rei.uoio = &userInfo;
             rei.uoic = &rsComm->clientUser;
             rei.uoip = &rsComm->proxyUser;
-            status = applyRuleArg( "acCreateUser", NULL, 0, &rei, SAVE_REI );
+            status = applyRuleArg( "acCreateUser", nullptr, 0, &rei, SAVE_REI );
             if ( status != 0 ) {
                 chlRollback( rsComm );
             }

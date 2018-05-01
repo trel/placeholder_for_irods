@@ -7,10 +7,10 @@
 
 namespace irods {
 
-    children_parser::children_parser( void ) {
+    children_parser::children_parser( ) {
     }
 
-    children_parser::~children_parser( void ) {
+    children_parser::~children_parser( ) {
         // TODO - stub
     }
 
@@ -57,7 +57,7 @@ namespace irods {
     error children_parser::remove_child(
         const std::string& child ) {
         error ret = SUCCESS();
-        children_map_t::iterator itr = children_list_.find( child );
+        auto itr = children_list_.find( child );
         if ( itr == children_list_.end() ) {
             std::stringstream msg;
             msg << "child [" << child << "] not found";
@@ -164,11 +164,11 @@ namespace irods {
     }
 
 
-    children_parser::const_iterator children_parser::begin( void ) const {
+    children_parser::const_iterator children_parser::begin( ) const {
         return children_list_.begin();
     }
 
-    children_parser::const_iterator children_parser::end( void ) const {
+    children_parser::const_iterator children_parser::end( ) const {
         return children_list_.end();
     }
 

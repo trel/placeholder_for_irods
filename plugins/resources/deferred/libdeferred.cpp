@@ -780,7 +780,7 @@ irods::error deferred_file_resolve_hierarchy(
         return PASSMSG( "Invalid resource context.", ret );
     }
 
-    if ( NULL == _opr || NULL == _curr_host || NULL == _out_parser || NULL == _out_vote ) {
+    if ( nullptr == _opr || nullptr == _curr_host || nullptr == _out_parser || nullptr == _out_vote ) {
         return ERROR( SYS_INVALID_INPUT_PARAM, "Invalid parameters." );
     }
 
@@ -887,14 +887,14 @@ class deferred_resource : public irods::resource {
 
         // =-=-=-=-=-=-
         // override from plugin_base
-        irods::error need_post_disconnect_maintenance_operation( bool& _flg ) {
+        irods::error need_post_disconnect_maintenance_operation( bool& _flg ) override {
             _flg = false;
             return ERROR( -1, "nop" );
         }
 
         // =-=-=-=-=-=-
         // override from plugin_base
-        irods::error post_disconnect_maintenance_operation( irods::pdmo_type& ) {
+        irods::error post_disconnect_maintenance_operation( irods::pdmo_type& ) override {
             return ERROR( -1, "nop" );
         }
 
@@ -912,7 +912,7 @@ irods::resource* plugin_factory( const std::string& _inst_name,
                                  const std::string& _context ) {
     // =-=-=-=-=-=-=-
     // 4a. create unixfilesystem_resource
-    deferred_resource* resc = new deferred_resource( _inst_name, _context );
+    auto  resc = new deferred_resource( _inst_name, _context );
 
     // =-=-=-=-=-=-=-
     // 4b. map function names to operations.  this map will be used to load

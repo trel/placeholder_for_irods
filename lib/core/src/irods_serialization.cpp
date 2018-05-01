@@ -37,7 +37,7 @@ namespace irods {
         const std::set<char>& character_set ) {
         std::stringstream str;
         str << '[';
-        for ( std::set<char>::const_iterator iter = character_set.begin(); iter != character_set.end(); ++iter ) {
+        for ( auto iter = character_set.begin(); iter != character_set.end(); ++iter ) {
             switch ( *iter ) {
             case ']':
             case '^':
@@ -56,8 +56,8 @@ namespace irods {
     boost::regex character_set_regex(
         const std::string& character_set ) {
         std::set<char> set;
-        for ( std::string::const_iterator iter = character_set.begin(); iter != character_set.end(); iter++ ) {
-            set.insert( *iter );
+        for (char iter : character_set) {
+            set.insert( iter );
         }
         return character_set_regex( set );
     }
@@ -71,13 +71,13 @@ namespace irods {
             if ( !boost::regex_match( std::string( 1, escape_char ), special_character_set_regex ) ) {
                 THROW( SYS_BAD_INPUT, "Regular expression passed to escape_string must match against the escape character." );
             }
-            for ( std::vector<std::string>::const_iterator iter = strs.begin(); iter != strs.end(); ++iter ) {
-                escaped_strs.push_back( boost::regex_replace( *iter, special_character_set_regex, get_format_string_for_escape( escape_char ) ) );
+            for (const auto & str : strs) {
+                escaped_strs.push_back( boost::regex_replace( str, special_character_set_regex, get_format_string_for_escape( escape_char ) ) );
             }
         }
         else {
-            for ( std::vector<std::string>::const_iterator iter = strs.begin(); iter != strs.end(); ++iter ) {
-                escaped_strs.push_back( *iter );
+            for (const auto & str : strs) {
+                escaped_strs.push_back( str );
             }
         }
         return escaped_strs;
@@ -345,11 +345,11 @@ namespace irods {
 
     std::string serialize_acl( const std::vector<std::vector<std::string> >& acl ) {
         std::vector<std::string> shallow_serialized_acl;
-        for ( std::vector<std::vector<std::string> >::const_iterator iter = acl.begin(); iter != acl.end(); ++iter ) {
-            if ( iter->size() != 2 ) {
+        for (const auto & iter : acl) {
+            if ( iter.size() != 2 ) {
                 THROW( SYS_BAD_INPUT, "ACLs must be a tuple of user and permission" );
             }
-            shallow_serialized_acl.push_back( serialize_list( *iter, boost::regex( "[\\\\ ;]" ), ' ', '\\' ) );
+            shallow_serialized_acl.push_back( serialize_list( iter, boost::regex( "[\\\\ ;]" ), ' ', '\\' ) );
         }
         return join( shallow_serialized_acl, ';' );
     }
@@ -373,7 +373,7 @@ extern "C" {
             return strdup( irods::serialize_metadata( metadata_strings ).c_str() );
         }
         catch ( const irods::exception& ) {
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -393,7 +393,7 @@ extern "C" {
             return strdup( irods::serialize_acl( acl_strings ).c_str() );
         }
         catch ( const irods::exception& ) {
-            return NULL;
+            return nullptr;
         }
     }
 }

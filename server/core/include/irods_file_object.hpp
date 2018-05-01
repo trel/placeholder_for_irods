@@ -24,7 +24,7 @@ namespace irods {
             file_object( const file_object& );
             file_object(
                 rsComm_t* _comm,
-                const std::string& _logical_name,
+                std::string  _logical_name,
                 const std::string& _filename,
                 rodsLong_t _resc_id,
                 int _fd,
@@ -32,7 +32,7 @@ namespace irods {
                 int _flags );
             file_object(
                 rsComm_t* _comm,
-                const std::string& _logical_name,
+                std::string  _logical_name,
                 const std::string& _filename,
                 const std::string& _resc_hier,
                 int _fd,
@@ -45,7 +45,7 @@ namespace irods {
 
             // =-=-=-=-=-=-=-
             // Destructor
-            virtual ~file_object();
+            ~file_object() override;
 
             // =-=-=-=-=-=-=-
             // Operators
@@ -56,13 +56,13 @@ namespace irods {
 
             // =-=-=-=-=-=-=-
             // plugin resolution operation
-            virtual error resolve(
+            error resolve(
                 const std::string&, // plugin interface name
-                plugin_ptr& );      // resolved plugin instance
+                plugin_ptr& ) override;      // resolved plugin instance
 
             // =-=-=-=-=-=-=-
             // accessor for rule engine variables
-            virtual error get_re_vars( rule_engine_vars_t& );
+            error get_re_vars( rule_engine_vars_t& ) override;
 
             // =-=-=-=-=-=-=-
             // Accessors
