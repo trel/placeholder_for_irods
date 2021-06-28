@@ -84,7 +84,7 @@ namespace irods::experimental::api {
                 THROW(err, "failed to perform the invocation");
             }
 
-            return json::parse({(char*)resp->buf, (char*)resp->buf+resp->len});
+            return json::parse((char*)resp->buf, (char*)resp->buf+resp->len);
 
         } // invoke
 

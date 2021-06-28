@@ -36,7 +36,7 @@ namespace {
     auto to_json(bytesBuf_t* b)
     {
         std::string foo{(char*)b->buf, (char*)b->buf+b->len};
-        return json::parse({(char*)b->buf, (char*)b->buf+b->len});
+        return json::parse((char*)b->buf, (char*)b->buf+b->len);
     } // to_json
 
     auto to_bbuf(const json& j)
