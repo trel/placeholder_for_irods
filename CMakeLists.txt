@@ -103,8 +103,9 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSIO
   add_compile_options(-Wno-error=tautological-overlap-compare)
 endif()
 
-include_directories(${IRODS_EXTERNALS_FULLPATH_JSON}/include
-                    ${IRODS_EXTERNALS_FULLPATH_SPDLOG}/include)
+find_package(nlohmann_json "3.7.3" REQUIRED)
+
+include_directories(${IRODS_EXTERNALS_FULLPATH_SPDLOG}/include)
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
@@ -299,6 +300,11 @@ add_library(
   ${CMAKE_SOURCE_DIR}/lib/filesystem/src/collection_iterator.cpp
   ${CMAKE_SOURCE_DIR}/lib/filesystem/src/recursive_collection_iterator.cpp
   )
+target_link_libraries(
+  irods_filesystem_client
+  PUBLIC
+  nlohmann_json::nlohmann_json
+  )
 target_include_directories(
   irods_filesystem_client
   PRIVATE
@@ -326,6 +332,11 @@ add_library(
   ${CMAKE_SOURCE_DIR}/lib/filesystem/src/collection_iterator.cpp
   ${CMAKE_SOURCE_DIR}/lib/filesystem/src/recursive_collection_iterator.cpp
   )
+target_link_libraries(
+  irods_filesystem_server
+  PUBLIC
+  nlohmann_json::nlohmann_json
+  )
 target_include_directories(
   irods_filesystem_server
   PRIVATE
@@ -352,6 +363,11 @@ add_library(
   OBJECT
   ${CMAKE_SOURCE_DIR}/lib/core/src/user_administration.cpp
   )
+target_link_libraries(
+  irods_user_administration_client
+  PRIVATE
+  nlohmann_json::nlohmann_json
+  )
 target_include_directories(
   irods_user_administration_client
   PRIVATE
@@ -367,6 +383,11 @@ add_library(
   irods_user_administration_server
   OBJECT
   ${CMAKE_SOURCE_DIR}/lib/core/src/user_administration.cpp
+  )
+target_link_libraries(
+  irods_user_administration_server
+  PRIVATE
+  nlohmann_json::nlohmann_json
   )
 target_include_directories(
   irods_user_administration_server
@@ -386,6 +407,11 @@ add_library(
   OBJECT
   ${CMAKE_SOURCE_DIR}/lib/core/src/resource_administration.cpp
   )
+target_link_libraries(
+  irods_resource_administration_client
+  PRIVATE
+  nlohmann_json::nlohmann_json
+  )
 target_include_directories(
   irods_resource_administration_client
   PRIVATE
@@ -402,6 +428,11 @@ add_library(
   irods_resource_administration_server
   OBJECT
   ${CMAKE_SOURCE_DIR}/lib/core/src/resource_administration.cpp
+  )
+target_link_libraries(
+  irods_resource_administration_server
+  PRIVATE
+  nlohmann_json::nlohmann_json
   )
 target_include_directories(
   irods_resource_administration_server
@@ -606,6 +637,11 @@ add_library(
   irods_client_api_functions
   OBJECT
   ${IRODS_LIBIRODS_CLIENT_API_SOURCES}
+  )
+target_link_libraries(
+  irods_client_api_functions
+  PUBLIC
+  nlohmann_json::nlohmann_json
   )
 target_include_directories(
   irods_client_api_functions
@@ -922,6 +958,8 @@ add_library(
   )
 target_link_libraries(
   irods_server
+  PUBLIC
+  nlohmann_json::nlohmann_json
   PRIVATE
   irods_common
   irods_plugin_dependencies
@@ -1037,6 +1075,8 @@ add_library(
   )
 target_link_libraries(
   irods_common
+  PUBLIC
+  nlohmann_json::nlohmann_json
   PRIVATE
   ${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_filesystem.so
   ${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_program_options.so
@@ -1089,6 +1129,11 @@ add_library(
   ${CMAKE_SOURCE_DIR}/lib/core/src/irods_pam_auth_object.cpp
   ${CMAKE_SOURCE_DIR}/lib/core/src/irods_ssl_object.cpp
   ${CMAKE_SOURCE_DIR}/lib/core/src/irods_tcp_object.cpp
+  )
+target_link_libraries(
+  irods_plugin_dependencies_functions
+  PUBLIC
+  nlohmann_json::nlohmann_json
   )
 target_include_directories(
   irods_plugin_dependencies_functions
@@ -1235,6 +1280,8 @@ add_library(
   )
 target_link_libraries(
   RodsAPIs
+  PUBLIC
+  nlohmann_json::nlohmann_json
   PRIVATE
   ${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_chrono.so
   ${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_filesystem.so
@@ -1262,7 +1309,6 @@ target_include_directories(
   ${CMAKE_SOURCE_DIR}/server/drivers/include
   ${IRODS_EXTERNALS_FULLPATH_BOOST}/include
   ${IRODS_EXTERNALS_FULLPATH_FMT}/include
-  ${IRODS_EXTERNALS_FULLPATH_JSON}/include
   ${OPENSSL_INCLUDE_DIR}
   )
 target_compile_definitions(RodsAPIs PRIVATE ${IRODS_COMPILE_DEFINITIONS})
@@ -1649,6 +1695,7 @@ install(
   ${CMAKE_SOURCE_DIR}/cmake/Modules/CheckCPPMacroDefinition.c.in
   ${CMAKE_SOURCE_DIR}/cmake/Modules/FindLibCXX.cmake
   ${CMAKE_SOURCE_DIR}/cmake/Modules/UseLibCXX.cmake
+  ${CMAKE_SOURCE_DIR}/cmake/Modules/Findnlohmann_json.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/irods/cmake/Modules
   COMPONENT ${IRODS_PACKAGE_COMPONENT_DEVELOPMENT_NAME}
   )
