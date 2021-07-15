@@ -58,7 +58,7 @@ using json   = nlohmann::json;
 
 namespace {
     static std::atomic_bool re_server_terminated{};
-    static std::vector<std::pair<std::string, int> > available_hosts;
+    static std::vector<std::string > available_hosts;
 
     void init_logger(
         const bool write_to_stdout,
@@ -79,25 +79,26 @@ namespace {
     }
 
     void load_available_executors(){
-        auto exec = irods::get_server_property<std::unordered_map<std::string, int> >(irods::HOSTS_AVAILABLE_RULE_EXECUTORS);
-        for(const auto &[hostname, port] : exec){
-            available_hosts.push_back(std::make_pair(hostname, port));
-        }
+        logger::delay_server::info("Picking out available executors");
+        auto hosts = irods::get_advanced_setting<std::vector<boost::any> >(irods::HOSTS_AVAILABLE_RULE_EXECUTORS);
+        for(const auto &i : hosts)
+            available_hosts.push_back(boost::any_cast<std::string>(i));
         rodsEnv env;
         _getRodsEnv(env);
-        available_hosts.push_back(std::make_pair(env.rodsHost,
-                                                 env.rodsPort));
+        available_hosts.push_back(env.rodsHost);
+        logger::delay_server::info("Executors populated");
     }
     ix::client_connection get_next_connection(){
         static std::atomic<int> host_index = 0;
-        if(available_hosts.empty())
+        if(available_hosts.empty()){
             load_available_executors();
+        }
         int cur = (host_index++) % available_hosts.size();
         rodsEnv env{};
         _getRodsEnv(env);
-
-        return ix::client_connection(available_hosts[cur].first,
-                                     available_hosts[cur].second,
+        logger::delay_server::info("Sending rule to {}", available_hosts[cur]);
+        return ix::client_connection(available_hosts[cur],
+                                     env.rodsPort,
                                      env.rodsUserName,
                                      env.rodsZone);
     }
