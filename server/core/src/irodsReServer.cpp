@@ -58,6 +58,7 @@ using json   = nlohmann::json;
 
 namespace {
     static std::atomic_bool re_server_terminated{};
+    static std::vector<std::pair<std::string, int> > available_hosts;
 
     void init_logger(
         const bool write_to_stdout,
@@ -75,6 +76,30 @@ namespace {
         if (char hostname[HOST_NAME_MAX]{}; gethostname(hostname, sizeof(hostname)) == 0) {
             logger::set_server_host(hostname);
         }
+    }
+
+    void load_available_executors(){
+        auto exec = irods::get_server_property<std::unordered_map<std::string, int> >(irods::HOSTS_AVAILABLE_RULE_EXECUTORS);
+        for(const auto &[hostname, port] : exec){
+            available_hosts.push_back(std::make_pair(hostname, port));
+        }
+        rodsEnv env;
+        _getRodsEnv(env);
+        available_hosts.push_back(std::make_pair(env.rodsHost,
+                                                 env.rodsPort));
+    }
+    ix::client_connection get_next_connection(){
+        static std::atomic<int> host_index = 0;
+        if(available_hosts.empty())
+            load_available_executors();
+        int cur = (host_index++) % available_hosts.size();
+        rodsEnv env{};
+        _getRodsEnv(env);
+
+        return ix::client_connection(available_hosts[cur].first,
+                                     available_hosts[cur].second,
+                                     env.rodsUserName,
+                                     env.rodsZone);
     }
 
     void set_ips_display_name(const std::string_view _display_name)
@@ -454,7 +479,7 @@ namespace {
             freeBBuf(rule_exec_submit_inp.packedReiAndArgBBuf);
         }};
 
-        ix::client_connection conn;
+        ix::client_connection conn = get_next_connection();
 
         try {
             rule_exec_submit_inp = fill_rule_exec_submit_inp(conn, rule_id);

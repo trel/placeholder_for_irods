@@ -166,5 +166,6 @@ namespace irods
 
     // misc. keywords
     const std::string HOSTS_CONFIG_JSON_OBJECT_KW("hosts_config_json_object");
+    const std::string HOSTS_AVAILABLE_RULE_EXECUTORS("available_executors");
 } // namespace irods
 
