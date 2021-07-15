@@ -1,27 +1,14 @@
-/**
- * @file  rcDataObjGet.cpp
- *
- */
-
-/*** Copyright (c), The Regents of the University of California            ***
- *** For more information please refer to files in the COPYRIGHT directory ***/
-/* This is script-generated code.  */
-/* See dataObjGet.h for a description of this API call.*/
-
-// =-=-=-=-=-=-=-
-// irods includes
 #include "dataObjGet.h"
+
 #include "procApiRequest.h"
 #include "apiNumber.h"
 #include "rcPortalOpr.h"
 #include "apiHeaderAll.h"
 #include "sockComm.h"
-
-// =-=-=-=-=-=-=-
 #include "irods_client_server_negotiation.hpp"
 #include "irods_server_properties.hpp"
 #include "irods_stacktrace.hpp"
-#include "checksum.hpp"
+#include "checksum.h"
 
 /**
  * \fn rcDataObjGet (rcComm_t *conn, dataObjInp_t *dataObjInp,
@@ -112,7 +99,7 @@ rcDataObjGet( rcComm_t *conn, dataObjInp_t *dataObjInp, char *locFilePath ) {
     }
 
     portalOprOut_t *portalOprOut = NULL;
-    bytesBuf_t dataObjOutBBuf;
+    bytesBuf_t dataObjOutBBuf{};
     int status = _rcDataObjGet( conn, dataObjInp, &portalOprOut, &dataObjOutBBuf );
 
     if ( status < 0 ) {
