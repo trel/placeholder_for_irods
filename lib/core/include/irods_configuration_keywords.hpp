@@ -167,6 +167,7 @@ namespace irods
 
     // misc. keywords
     extern const std::string HOSTS_CONFIG_JSON_OBJECT_KW;
+    extern const std::string HOSTS_AVAILABLE_RULE_EXECUTORS;
 } // namespace irods
 
 #endif // CONFIGURATION_KEYWORDS_HPP

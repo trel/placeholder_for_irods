@@ -58,6 +58,7 @@ using json   = nlohmann::json;
 
 namespace {
     static std::atomic_bool re_server_terminated{};
+    static std::vector<std::string > available_hosts;
 
     void init_logger(
         const bool write_to_stdout,
@@ -75,6 +76,31 @@ namespace {
         if (char hostname[HOST_NAME_MAX]{}; gethostname(hostname, sizeof(hostname)) == 0) {
             logger::set_server_host(hostname);
         }
+    }
+
+    void load_available_executors(){
+        logger::delay_server::info("Picking out available executors");
+        auto hosts = irods::get_advanced_setting<std::vector<boost::any> >(irods::HOSTS_AVAILABLE_RULE_EXECUTORS);
+        for(const auto &i : hosts)
+            available_hosts.push_back(boost::any_cast<std::string>(i));
+        rodsEnv env;
+        _getRodsEnv(env);
+        available_hosts.push_back(env.rodsHost);
+        logger::delay_server::info("Executors populated");
+    }
+    ix::client_connection get_next_connection(){
+        static std::atomic<int> host_index = 0;
+        if(available_hosts.empty()){
+            load_available_executors();
+        }
+        int cur = (host_index++) % available_hosts.size();
+        rodsEnv env{};
+        _getRodsEnv(env);
+        logger::delay_server::info("Sending rule to {}", available_hosts[cur]);
+        return ix::client_connection(available_hosts[cur],
+                                     env.rodsPort,
+                                     env.rodsUserName,
+                                     env.rodsZone);
     }
 
     void set_ips_display_name(const std::string_view _display_name)
@@ -454,7 +480,7 @@ namespace {
             freeBBuf(rule_exec_submit_inp.packedReiAndArgBBuf);
         }};
 
-        ix::client_connection conn;
+        ix::client_connection conn = get_next_connection();
 
         try {
             rule_exec_submit_inp = fill_rule_exec_submit_inp(conn, rule_id);
